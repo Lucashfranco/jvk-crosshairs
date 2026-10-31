@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-bg: #07060d;
+  --color-card: #110e1e;
+  --color-card-hover: #171329;
+  --color-line: #2a2440;
+  --color-accent: #8b5cf6;
+  --color-accent-strong: #7c3aed;
+  --color-ink: #e9e6f5;
+  --color-muted: #9c95b5;
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-oxanium);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}

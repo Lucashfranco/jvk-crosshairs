@@ -9,3 +9,4 @@ demos/
 .env.*
 node_modules/
 .next/
+!.env.example

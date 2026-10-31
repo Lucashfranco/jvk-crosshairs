@@ -6,7 +6,7 @@ Miras dos pro players de CS2, extraídas das demos das partidas. Projeto da JVK 
 
 - `pipeline/`: Python. Decodifica códigos de mira (`jvk_pipeline/sharecode.py`) e extrai a mira de cada jogador de uma demo `.dem` com o demoparser2 (`jvk_pipeline/extract.py`).
 - `supabase/migrations/`: esquema do banco (times, jogadores, miras, partidas processadas, execuções).
-- `web/`: front-end Next.js + Tailwind (a fazer).
+- `web/`: front-end Next.js 16 + Tailwind. Sem as variáveis de `web/.env.example` usa dados de exemplo (`npm --prefix web run dev`).
 
 ## Formatos de código de mira
 

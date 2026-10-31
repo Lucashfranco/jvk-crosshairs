@@ -1,0 +1,39 @@
+import type { Metadata } from "next";
+import { Inter, Oxanium } from "next/font/google";
+import Link from "next/link";
+import { usingSampleData } from "@/lib/data";
+import "./globals.css";
+
+const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+const oxanium = Oxanium({ variable: "--font-oxanium", subsets: ["latin"], weight: ["500", "700"] });
+
+export const metadata: Metadata = {
+  title: "JVK Crosshairs: miras dos pros de CS2",
+  description: "Copie a mira dos jogadores profissionais de CS2, atualizada a partir das demos das partidas.",
+};
+
+export default function RootLayout({ children }: LayoutProps<"/">) {
+  return (
+    <html lang="pt-BR" className={`${inter.variable} ${oxanium.variable} h-full antialiased`}>
+      <body className="flex min-h-full flex-col font-sans">
+        <header className="border-b border-line">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+            <Link href="/" className="font-display text-xl font-bold tracking-wide">
+              JVK <span className="text-accent">Crosshairs</span>
+            </Link>
+            <span className="text-sm text-muted">por JVK Performance</span>
+          </div>
+        </header>
+        {usingSampleData && (
+          <div className="border-b border-accent/40 bg-accent/10 px-4 py-2 text-center text-sm text-ink">
+            Dados de exemplo: os times e jogadores abaixo não são reais. O banco ainda não foi conectado.
+          </div>
+        )}
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
+        <footer className="border-t border-line px-4 py-6 text-center text-xs text-muted">
+          Miras extraídas das demos das partidas. Não afiliado à Valve.
+        </footer>
+      </body>
+    </html>
+  );
+}
