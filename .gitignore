@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.dem
+*.rar
+*.zip
+demos/
+.env
+.env.*
+node_modules/
+.next/
