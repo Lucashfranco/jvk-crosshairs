@@ -33,11 +33,12 @@ class Rest:
     def select(self, path: str) -> list[dict]:
         return self.request("GET", path)
 
-    def insert(self, table: str, rows, on_conflict: str | None = None) -> list[dict]:
+    def insert(self, table: str, rows, on_conflict: str | None = None, ignore_duplicates: bool = False) -> list[dict]:
+        """Insere linhas. Com on_conflict, atualiza a existente (ou a mantém, se ignore_duplicates)."""
         path, prefer = table, "return=representation"
         if on_conflict:
             path += f"?on_conflict={on_conflict}"
-            prefer += ",resolution=merge-duplicates"
+            prefer += ",resolution=" + ("ignore-duplicates" if ignore_duplicates else "merge-duplicates")
         return self.request("POST", path, rows, prefer)
 
     def update(self, path: str, values: dict) -> None:

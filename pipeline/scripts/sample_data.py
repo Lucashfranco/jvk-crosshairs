@@ -29,7 +29,7 @@ CODES = [
 
 def player(i: int, code: str | None) -> dict:
     if code is None:  # jogador ainda sem mira cadastrada
-        keys = ("code", "format", "params", "console", "last_seen")
+        keys = ("code", "format", "params", "console", "last_seen", "source", "source_url")
         return {"player_id": i, "nickname": f"Jogador {i}", **dict.fromkeys(keys)}
     decoded = sharecode.decode(code)
     return {
@@ -40,6 +40,8 @@ def player(i: int, code: str | None) -> dict:
         "params": decoded,
         "console": sharecode.to_console(decoded),
         "last_seen": "2026-10-31T00:00:00Z",
+        "source": "envio #0",
+        "source_url": None,
     }
 
 

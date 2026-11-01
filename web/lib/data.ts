@@ -40,7 +40,7 @@ export async function getTeam(slug: string): Promise<{ team: Team; players: Play
   const [team] = await rest<Team[]>(`teams?select=id,slug,name,rank,logo_url&slug=eq.${encodeURIComponent(slug)}`);
   if (!team) return null;
   const players = await rest<PlayerCrosshair[]>(
-    `current_crosshairs?select=player_id,nickname,code,format,params,console,last_seen&team_id=eq.${team.id}&order=nickname.asc`,
+    `current_crosshairs?select=player_id,nickname,code,format,params,console,last_seen,source,source_url&team_id=eq.${team.id}&order=nickname.asc`,
   );
   return { team, players };
 }

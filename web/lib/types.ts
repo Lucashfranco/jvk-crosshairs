@@ -40,6 +40,8 @@ export type PlayerCrosshair = {
   params: CrosshairParams | null;
   console: string | null;
   last_seen: string | null;
+  source: string | null; // "Liquipedia" ou "envio #<id>"
+  source_url: string | null;
 };
 
 export type RosterTeam = {

@@ -36,8 +36,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         )}
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
         <footer className="border-t border-line px-4 py-6 text-center text-xs text-muted">
-          Miras enviadas pela comunidade e revisadas antes de publicar. Ranking: Valve Regional Standings. Não afiliado à
-          Valve.
+          Miras do{" "}
+          <a
+            href="https://liquipedia.net/counterstrike/Liquipedia:Copyrights"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-accent"
+          >
+            Liquipedia (CC BY-SA)
+          </a>{" "}
+          e enviadas pela comunidade. Ranking: Valve Regional Standings. Não afiliado à Valve.
         </footer>
       </body>
     </html>

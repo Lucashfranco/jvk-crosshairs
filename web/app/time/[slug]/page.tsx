@@ -88,9 +88,33 @@ function PlayerCard({ player }: { player: PlayerCrosshair }) {
           Código no formato antigo (CSGO-): o CS2 não importa mais. Use os comandos.
         </p>
       )}
+      <SourceLine player={player} />
       <Link href={submitHref} className="text-xs text-muted hover:text-accent">
         Mira mudou? Envie a nova
       </Link>
     </li>
+  );
+}
+
+// Fonte e data da mira. Miras do Liquipedia (CC BY-SA) sempre levam o link da página do jogador.
+function SourceLine({ player }: { player: PlayerCrosshair }) {
+  const date = player.last_seen
+    ? new Date(player.last_seen).toLocaleDateString("pt-BR", { month: "short", year: "numeric", timeZone: "UTC" })
+    : null;
+  const fromLiquipedia = player.source === "Liquipedia" && player.source_url;
+  return (
+    <p className="text-center text-xs text-muted">
+      {fromLiquipedia ? (
+        <>
+          Fonte:{" "}
+          <a href={player.source_url!} target="_blank" rel="noopener noreferrer" className="underline hover:text-accent">
+            Liquipedia
+          </a>
+        </>
+      ) : (
+        "Enviada pela comunidade"
+      )}
+      {date && ` · vista em ${date}`}
+    </p>
   );
 }

@@ -12,10 +12,12 @@ Miras dos pro players de CS2, extraídas das demos das partidas. Projeto da JVK 
 ## Como as miras chegam ao site
 
 1. **Times e elencos**: o job semanal lê o top 20 do [Valve Regional Standings](https://github.com/ValveSoftware/counter-strike_regional_standings), cria os times e jogadores novos e move quem trocou de time.
-2. **Envio**: qualquer pessoa manda o código da mira de um jogador em `/enviar`. O site confere o código antes de gravar e o banco só aceita envios `pendente` vindos do público.
-3. **Revisão**: no Supabase, Table Editor → `submissions`, troque `status` para `aprovado` ou `rejeitado` (o campo `note` guarda o motivo).
-4. **Publicação**: o job decodifica os envios aprovados, grava a mira (`crosshairs`) e marca o envio como `publicado`, ou `invalido` se o código não decodificar. Cada execução fica em `pipeline_runs`.
+2. **Liquipedia**: o job busca a seção "Crosshair table" da página de cada jogador pela API do Liquipedia (até 50 páginas por requisição, uma requisição a cada 2,5 s, User-Agent identificado, como pedem os [termos](https://liquipedia.net/api-terms-of-use)). A mira só é aceita se o time da página bater com o do VRS, porque há nicks repetidos. O conteúdo é CC BY-SA: o site mostra "Fonte: Liquipedia" com link em cada mira. Uso permitido para site **não comercial**.
+3. **Envio**: qualquer pessoa manda o código da mira de um jogador em `/enviar`. O site confere o código antes de gravar e o banco só aceita envios `pendente` vindos do público.
+4. **Revisão**: no Supabase, Table Editor → `submissions`, troque `status` para `aprovado` ou `rejeitado` (o campo `note` guarda o motivo).
+5. **Publicação**: o job decodifica os envios aprovados, grava a mira (`crosshairs`) e marca o envio como `publicado`, ou `invalido` se o código não decodificar. Cada execução fica em `pipeline_runs`.
 
+A mira mostrada é a vista mais recentemente: a do Liquipedia leva a data da referência dela, a de um envio leva a data da publicação.
 O site guarda as consultas em cache por até 1 hora, então uma mira publicada aparece em até 1 hora depois do job.
 
 ### Secrets do GitHub Actions

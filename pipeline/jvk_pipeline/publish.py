@@ -1,4 +1,4 @@
-"""Job semanal: atualiza times e elencos pelo VRS e publica os envios aprovados.
+"""Job semanal: atualiza times e elencos pelo VRS, busca as miras no Liquipedia e publica os envios aprovados.
 
 Uso (GitHub Actions ou local):
     SUPABASE_URL=... SUPABASE_SERVICE_KEY=... python -m jvk_pipeline.publish
@@ -13,7 +13,7 @@ import sys
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
-from . import sharecode, vrs
+from . import liquipedia, sharecode, vrs
 from .db import Rest
 
 
@@ -50,21 +50,27 @@ def plan_roster_changes(players: list[dict], rosters: dict[int, tuple[str, ...]]
     return changes
 
 
-def build_crosshair(submission: dict) -> tuple[dict | None, str | None]:
-    """Decodifica um envio. Devolve (linha de crosshairs, None) ou (None, motivo do erro)."""
-    try:
-        decoded = sharecode.decode(submission["code"])
-    except sharecode.InvalidCrosshairShareCode as e:
-        return None, f"código inválido: {e}"
+def crosshair_row(player_id: int, code: str, source: str, last_seen: str, source_url: str | None = None) -> dict:
+    """Linha de crosshairs com o código decodificado. Lança InvalidCrosshairShareCode se for inválido."""
+    decoded = sharecode.decode(code)
     return {
-        "player_id": submission["player_id"],
-        "code": submission["code"],
+        "player_id": player_id,
+        "code": code,
         "format": decoded["format"],
         "params": decoded,
         "console": sharecode.to_console(decoded),
-        "source": f"envio #{submission['id']}",
-        "last_seen": _now(),
-    }, None
+        "source": source,
+        "source_url": source_url,
+        "last_seen": last_seen,
+    }
+
+
+def build_crosshair(submission: dict) -> tuple[dict | None, str | None]:
+    """Decodifica um envio. Devolve (linha de crosshairs, None) ou (None, motivo do erro)."""
+    try:
+        return crosshair_row(submission["player_id"], submission["code"], f"envio #{submission['id']}", _now()), None
+    except sharecode.InvalidCrosshairShareCode as e:
+        return None, f"código inválido: {e}"
 
 
 def sync_teams(db: Rest, top: int = 20) -> str:
@@ -83,6 +89,28 @@ def sync_teams(db: Rest, top: int = 20) -> str:
         db.update(f"players?id=eq.{player_id}", {"team_id": None, "updated_at": _now()})
     return (f"VRS {path}: {len(ranked)} times; {len(changes.inserts)} jogadores novos, "
             f"{len(changes.moves)} trocaram de time, {len(changes.releases)} saíram")
+
+
+def sync_liquipedia(db: Rest) -> str:
+    """Grava as miras do Liquipedia dos jogadores dos times ativos.
+
+    A data da mira é a da referência no Liquipedia, então um envio mais novo da comunidade continua
+    sendo a mira atual. Mira que já existe para o jogador não é tocada (ignore-duplicates).
+    """
+    rows = db.select("players?select=id,nickname,teams!inner(name,slug)&teams.active=eq.true&order=id.asc")
+    players = [{"id": r["id"], "nickname": r["nickname"], "team_name": r["teams"]["name"],
+                "team_slug": r["teams"]["slug"]} for r in rows]
+    found, skipped = liquipedia.match_crosshairs(players, liquipedia.fetch_pages([p["nickname"] for p in players]))
+    saved = []
+    for f in found:
+        try:
+            saved.append(crosshair_row(f.player_id, f.code, "Liquipedia", f.date, f.url))
+        except sharecode.InvalidCrosshairShareCode as e:
+            skipped.append(f"jogador {f.player_id}: código do Liquipedia inválido ({e})")
+    if saved:
+        db.insert("crosshairs", saved, on_conflict="player_id,code", ignore_duplicates=True)
+    lines = [f"Liquipedia: {len(saved)} miras de {len(players)} jogadores"]
+    return "\n".join(lines + [f"  sem mira do Liquipedia: {s}" for s in skipped])
 
 
 def publish_submissions(db: Rest) -> tuple[int, int]:
@@ -109,6 +137,7 @@ def main() -> int:
     log, status, published, invalid = [], "erro", 0, 0
     try:
         log.append(sync_teams(db))
+        log.append(sync_liquipedia(db))
         published, invalid = publish_submissions(db)
         log.append(f"envios: {published} publicados, {invalid} inválidos")
         status = "ok" if invalid == 0 else "parcial"
