@@ -65,3 +65,11 @@ def test_check_key():
     assert "sb_secret_" in check_key("sb_publishable_abc")
     problem = check_key("sb_secret_abc\nsb_secret_def")
     assert "2 linha(s)" in problem and "abc" not in problem
+
+
+def test_build_crosshair_converte_codigo_antigo():
+    row, error = build_crosshair({"id": 9, "player_id": 4, "code": "CSGO-AkTYm-syAcf-UKom7-tGKdM-mOJvM"})
+    assert error is None
+    assert row["legacy_code"] == "CSGO-AkTYm-syAcf-UKom7-tGKdM-mOJvM"
+    assert row["format"] == "cs2-v1" and row["code"] == sharecode.encode_cs2(row["params"])
+    assert "cl_crosshairsize" not in row["console"]

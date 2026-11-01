@@ -89,6 +89,78 @@ def _decode_cs2_v1(b: list[int]) -> dict:
     }
 
 
+def encode_cs2(c: dict) -> str:
+    """Gera o código `CS…` (cs2-v1) a partir dos parâmetros: o inverso de _decode_cs2_v1."""
+    b = [0] * 32
+    b[1] = 1
+    b[2], b[3] = c["screenHeight"] & 0xFF, c["screenHeight"] >> 8
+    b[4] = c["style"] | c["followRecoil"] << 5 | c["centerDotEnabled"] << 6 | c["tStyleEnabled"] << 7
+    b[5:13] = [c["red"], c["green"], c["blue"], c["alpha"],
+               c["outlineRed"], c["outlineGreen"], c["outlineBlue"], c["outlineAlpha"]]
+    b[13] = c["thickness"] | c["outlineMode"] << 6
+    gap = c["gap"] & 0xFFFF
+    b[14], b[15] = gap & 0xFF, gap >> 8
+    b[16] = c["length"]
+    b[17] = c["dynamicSpreadLimit"]
+    bits = (c["splitDistance"] | round(c["innerSplitAlpha"] * 100) << 7 | round(c["outerSplitAlpha"] * 100 - 30) << 14
+            | round(c["splitSizeRatio"] * 100) << 21 | c["scopeDotUseCrosshairColor"] << 28)
+    b[18:22] = list(bits.to_bytes(4, "little"))
+    b[22] = round(c["scopeDotScale"] * 100) - 10
+    if any(not 0 <= v <= 255 for v in b):
+        raise InvalidCrosshairShareCode("parâmetro fora do intervalo do formato cs2-v1")
+    b[0] = sum(b[1:]) % 256
+    big = int.from_bytes(bytes(b), "big")
+    chars = []
+    for _ in range(44):
+        big, r = divmod(big, _BASE)
+        chars.append(DICTIONARY[r])
+    return "CS" + "".join(chars)
+
+
+# Valores padrão do CS2 para o que o formato antigo (CS:GO) não guarda.
+_CS2_DEFAULTS = {
+    "outlineRed": 0, "outlineGreen": 0, "outlineBlue": 0, "outlineAlpha": 255,
+    "dynamicSpreadLimit": 0, "screenHeight": 1080, "scopeDotScale": 1.0, "scopeDotUseCrosshairColor": False,
+}
+LEGACY_SCREEN_HEIGHT = 1080
+# Cores fixas do CS:GO (cl_crosshaircolor 0 a 4); a 5 usa o RGB do código.
+_LEGACY_COLORS = {0: (250, 50, 50), 1: (50, 250, 50), 2: (250, 250, 50), 3: (50, 50, 250), 4: (50, 250, 250)}
+# Estilos do CS:GO (0 padrão, 1 padrão estático, 2 clássico, 3 clássico dinâmico, 4 clássico estático,
+# 5 legado) -> estilos do CS2 desde 09/2026 (0 cruz dinâmica, 2 cruz dinâmica legado, 4 cruz estática).
+_LEGACY_STYLES = {0: 0, 1: 4, 2: 4, 3: 0, 4: 4, 5: 2}
+
+
+def convert_legacy(c: dict) -> dict:
+    """Converte uma mira legacy-v1 (unidades do CS:GO) para parâmetros cs2-v1 em pixels de 1080p.
+
+    A Valve não publicou a conversão. Segundo os guias da comunidade, o tamanho e a espessura antigos
+    valiam altura da tela / 480 pixels por unidade, e o espaço antigo valia 4 + gap pixels.
+    O resultado pode diferir 1 px da mira original.
+    """
+    if c["format"] != "legacy-v1":
+        raise ValueError(f"conversão só para legacy-v1, não {c['format']}")
+    unit = LEGACY_SCREEN_HEIGHT / 480
+    red, green, blue = _LEGACY_COLORS.get(c["color"], (c["red"], c["green"], c["blue"]))
+    return {
+        "format": "cs2-v1",
+        **_CS2_DEFAULTS,
+        "style": _LEGACY_STYLES.get(c["style"], 4),
+        "followRecoil": c["followRecoil"],
+        "centerDotEnabled": c["centerDotEnabled"],
+        "tStyleEnabled": c["tStyleEnabled"],
+        "outlineMode": 1 if c["outlineEnabled"] else 0,
+        "red": red, "green": green, "blue": blue,
+        "alpha": c["alpha"] if c["alphaEnabled"] else 255,
+        "gap": max(0, round(4 + c["gap"])),
+        "length": _clamp(round(c["length"] * unit), 0, 255),
+        "thickness": _clamp(round(c["thickness"] * unit), 1, 32),
+        "splitDistance": c["splitDistance"],
+        "innerSplitAlpha": c["innerSplitAlpha"],
+        "outerSplitAlpha": _clamp(c["outerSplitAlpha"], 0.3, 1.0),
+        "splitSizeRatio": c["splitSizeRatio"],
+    }
+
+
 # --- legado ---------------------------------------------------------------------------------
 
 def _decode_legacy_v1(b: list[int]) -> dict:

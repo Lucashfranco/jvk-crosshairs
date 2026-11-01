@@ -29,9 +29,16 @@ O site guarda as consultas em cache por até 1 hora, então uma mira publicada a
 
 ## Formatos de código de mira
 
-Desde a atualização de 30/09/2026 o CS2 gera códigos `CS` + 44 caracteres e não importa mais os
-códigos `CSGO-xxxxx-...`. O decodificador entende os dois; o site mostra o código como veio da demo
-e sempre oferece os comandos de console, que funcionam em qualquer caso.
+Desde a atualização de 09/2026 o CS2 gera códigos `CS` + 44 caracteres, não importa mais os
+códigos `CSGO-xxxxx-...` e renomeou os comandos (`cl_crosshairsize` virou `cl_crosshair_length`,
+agora em pixels). O job converte cada mira antiga do CS:GO (`legacy-v1`) para o formato atual
+(`sharecode.convert_legacy` + `encode_cs2`): `code` passa a ser o código `CS…` gerado e o original
+fica em `legacy_code`.
+
+A Valve não publicou a fórmula de conversão. Usamos a dos guias da comunidade, em 1080p: tamanho e
+espessura antigos × 1080/480 px, espaço = 4 + gap antigo (mínimo 0), contorno de 1 px, cores fixas do
+CS:GO viram RGB e os estilos antigos viram cruz estática (4), dinâmica (0) ou dinâmica legado (2).
+O resultado pode diferir 1 px da mira original; o site avisa isso em cada mira convertida.
 
 ## Rodando os testes
 

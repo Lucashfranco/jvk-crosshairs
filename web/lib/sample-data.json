@@ -12,6 +12,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": "CSoYQNXCQtL5b44fPZKwPPZZCUpsywopyvJW3koh75uFih",
           "format": "cs2-v1",
           "params": {
@@ -52,6 +53,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": "CSGO-tsJdC-2PFX6-fw8qD-6GDaX-rYCUM",
           "format": "legacy-v3",
           "params": {
@@ -86,6 +88,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": "CSGO-G8oAC-RyvWc-Hi3CZ-voSwn-QJbfE",
           "format": "legacy-v4",
           "params": {
@@ -120,6 +123,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": "CSGO-MnUCC-89iG7-2cVar-wy7Yn-amCpF",
           "format": "legacy-v3",
           "params": {
@@ -154,6 +158,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": "CSGO-sP6xU-TSyN9-sZcO5-2D48M-UppkP",
           "format": "legacy-v4",
           "params": {
@@ -196,6 +201,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": "CSGO-cA4U9-hiJwT-Wo9NA-YmTS8-WfH4C",
           "format": "legacy-v3",
           "params": {
@@ -230,6 +236,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": "CSGO-Cn37R-YE7vo-pLCAL-aURmZ-z6zkG",
           "format": "legacy-v1",
           "params": {
@@ -267,6 +274,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": "CSGO-9JzcN-4dZtA-DdXis-8qz5T-rCnkP",
           "format": "legacy-v1",
           "params": {
@@ -304,6 +312,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": "CSGO-vcmKL-TWb8f-ddSDD-qM2Xx-T66VH",
           "format": "legacy-v3",
           "params": {
@@ -338,6 +347,7 @@
           "photo_url": null,
           "photo_credit": null,
           "country_code": "br",
+          "legacy_code": null,
           "code": null,
           "format": null,
           "params": null,

@@ -45,6 +45,7 @@ export type PlayerCrosshair = {
   photo_url: string | null; // foto do Liquipedia, copiada para o Storage
   photo_credit: string | null; // autor e dono da foto
   country_code: string | null; // ISO 3166-1 alfa-2, minúsculo
+  legacy_code: string | null; // código CSGO- original, quando a mira foi convertida para o formato atual
 };
 
 export type RosterTeam = {

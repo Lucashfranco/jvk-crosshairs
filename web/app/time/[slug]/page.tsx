@@ -84,9 +84,14 @@ function PlayerCard({ player }: { player: PlayerCrosshair }) {
         {player.code}
       </code>
       <div className="flex w-full flex-col gap-2">
-        <CopyButton text={player.console} label="Copiar comandos" primary />
-        <CopyButton text={player.code} label="Copiar código" />
+        <CopyButton text={legacy ? player.console : player.code} label={legacy ? "Copiar comandos" : "Copiar código"} primary />
+        <CopyButton text={legacy ? player.code : player.console} label={legacy ? "Copiar código" : "Copiar comandos"} />
       </div>
+      {player.legacy_code && (
+        <p className="text-center text-xs text-muted" title={`Código original: ${player.legacy_code}`}>
+          Convertido do código antigo do CS:GO para o CS2 atual. Pode diferir 1 px da original.
+        </p>
+      )}
       {legacy && (
         <p className="text-center text-xs text-muted">
           Código no formato antigo (CSGO-): o CS2 não importa mais. Use os comandos.

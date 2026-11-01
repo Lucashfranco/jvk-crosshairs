@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
 from . import images, liquipedia, sharecode, vrs
-from .db import Rest
+from .db import Rest, SupabaseError
 
 
 def _now() -> str:
@@ -50,19 +50,43 @@ def plan_roster_changes(players: list[dict], rosters: dict[int, tuple[str, ...]]
     return changes
 
 
+def converted_fields(code: str) -> dict:
+    """code, format, params, console e legacy_code de um código de mira.
+
+    Código antigo do CS:GO (legacy-v1) é convertido para o formato atual: o CS2 não importa mais
+    CSGO- nem aceita os comandos antigos. O original fica em legacy_code.
+    Lança InvalidCrosshairShareCode se o código for inválido.
+    """
+    decoded = sharecode.decode(code)
+    legacy_code = None
+    if decoded["format"] == "legacy-v1":
+        legacy_code, decoded = code, sharecode.convert_legacy(decoded)
+        code = sharecode.encode_cs2(decoded)
+    return {"code": code, "format": decoded["format"], "params": decoded,
+            "console": sharecode.to_console(decoded), "legacy_code": legacy_code}
+
+
 def crosshair_row(player_id: int, code: str, source: str, last_seen: str, source_url: str | None = None) -> dict:
     """Linha de crosshairs com o código decodificado. Lança InvalidCrosshairShareCode se for inválido."""
-    decoded = sharecode.decode(code)
     return {
         "player_id": player_id,
-        "code": code,
-        "format": decoded["format"],
-        "params": decoded,
-        "console": sharecode.to_console(decoded),
+        **converted_fields(code),
         "source": source,
         "source_url": source_url,
         "last_seen": last_seen,
     }
+
+
+def upgrade_legacy(db: Rest) -> str:
+    """Converte as miras antigas (legacy-v1) que já estão no banco para o formato atual."""
+    converted, failed = 0, []
+    for row in db.select("crosshairs?select=id,player_id,code&format=eq.legacy-v1&order=id.asc"):
+        try:
+            db.update(f"crosshairs?id=eq.{row['id']}", converted_fields(row["code"]))
+            converted += 1
+        except (sharecode.InvalidCrosshairShareCode, SupabaseError) as e:
+            failed.append(f"mira {row['id']}: {e}")
+    return "\n".join([f"Conversão: {converted} miras antigas convertidas para CS…"] + [f"  erro: {f}" for f in failed])
 
 
 def build_crosshair(submission: dict) -> tuple[dict | None, str | None]:
@@ -162,6 +186,7 @@ def main() -> int:
     try:
         log.append(sync_teams(db))
         players, pages = load_liquipedia(db)
+        log.append(upgrade_legacy(db))  # antes do Liquipedia: as miras já gravadas passam a ter o código CS…
         log.append(sync_liquipedia(db, players, pages))
         log.append(images.sync_images(db, players, pages))
         published, invalid = publish_submissions(db)
