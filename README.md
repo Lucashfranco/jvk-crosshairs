@@ -17,6 +17,8 @@ Miras dos pro players de CS2, extraídas das demos das partidas. Projeto da JVK 
 4. **Revisão**: no Supabase, Table Editor → `submissions`, troque `status` para `aprovado` ou `rejeitado` (o campo `note` guarda o motivo).
 5. **Publicação**: o job decodifica os envios aprovados, grava a mira (`crosshairs`) e marca o envio como `publicado`, ou `invalido` se o código não decodificar. Cada execução fica em `pipeline_runs`.
 
+**Fotos e logos**: o mesmo job pega na página de cada jogador a foto e o país, e na página do time a logo para fundo escuro (de preferência só o símbolo). As imagens são reduzidas, convertidas para WebP e copiadas para o bucket `imagens` do Supabase Storage; só são baixadas de novo quando o arquivo muda no Liquipedia. As fotos pertencem aos fotógrafos e campeonatos (o crédito aparece em cada card) e as logos aos times. Se um dono pedir, apague a imagem no Storage e limpe `photo_url`/`photo_source` (ou `logo_url`/`logo_source`).
+
 A mira mostrada é a vista mais recentemente: a do Liquipedia leva a data da referência dela, a de um envio leva a data da publicação.
 O site guarda as consultas em cache por até 1 hora, então uma mira publicada aparece em até 1 hora depois do job.
 
