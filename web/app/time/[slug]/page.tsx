@@ -8,6 +8,8 @@ import type { PlayerCrosshair } from "@/lib/types";
 
 export async function generateStaticParams() {
   const teams = await getTeams();
+  // Com Cache Components a lista não pode ser vazia; com o banco vazio gera só uma página 404.
+  if (teams.length === 0) return [{ slug: "_vazio" }];
   return teams.map((t) => ({ slug: t.slug }));
 }
 
