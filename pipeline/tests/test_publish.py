@@ -1,5 +1,5 @@
 from jvk_pipeline import sharecode
-from jvk_pipeline.publish import build_crosshair, plan_roster_changes
+from jvk_pipeline.publish import build_crosshair, check_key, plan_roster_changes
 from jvk_pipeline.vrs import parse_standings, slugify
 
 # Trecho do formato real de live/2026/standings_global_2026_10_05.md (repositório da Valve).
@@ -58,3 +58,10 @@ def test_build_crosshair_checksum_errado():
     # Mesmo formato, último caractere trocado: passa na regex do banco mas não decodifica.
     row, error = build_crosshair({"id": 8, "player_id": 3, "code": "CSoYQNXCQtL5b44fPZKwPPZZCUpsywopyvJW3koh75uFij"})
     assert row is None and error.startswith("código inválido")
+
+
+def test_check_key():
+    assert check_key("sb_secret_abc123") is None
+    assert "sb_secret_" in check_key("sb_publishable_abc")
+    problem = check_key("sb_secret_abc\nsb_secret_def")
+    assert "2 linha(s)" in problem and "abc" not in problem

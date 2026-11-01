@@ -127,12 +127,27 @@ def publish_submissions(db: Rest) -> tuple[int, int]:
     return published, invalid
 
 
+def check_key(key: str) -> str | None:
+    """Descreve o que há de errado com a chave, sem nunca mostrar o valor dela."""
+    bad = [c for c in key if c.isspace() or not c.isascii() or not c.isprintable()]
+    if bad:
+        lines = key.count("\n") + 1
+        return f"{len(key)} caracteres, {lines} linha(s), {len(bad)} caractere(s) inválido(s) (espaço, acento ou quebra de linha)"
+    if not key.startswith(("sb_secret_", "eyJ")):
+        return f"{len(key)} caracteres; não começa com sb_secret_ (a publishable não serve)"
+    return None
+
+
 def main() -> int:
     # strip: secrets colados no terminal costumam vir com quebra de linha no fim.
     url = os.environ.get("SUPABASE_URL", "").strip()
     key = os.environ.get("SUPABASE_SERVICE_KEY", "").strip()
     if not url or not key:
         print("Defina SUPABASE_URL e SUPABASE_SERVICE_KEY.", file=sys.stderr)
+        return 2
+    problem = check_key(key)
+    if problem:
+        print(f"Chave do Supabase inválida: {problem}", file=sys.stderr)
         return 2
     db = Rest(url, key)
     run_id = db.insert("pipeline_runs", {"status": "rodando"})[0]["id"]
