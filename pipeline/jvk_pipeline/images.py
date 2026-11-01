@@ -19,6 +19,8 @@ from .db import Rest
 BUCKET = "imagens"
 PHOTO_SIZE = 480  # as fotos ocupam a largura do card
 LOGO_SIZE = 256
+# Valor de photo_source/logo_source para uma imagem retirada a pedido do dono: o job não baixa de novo.
+BLOCKED = "bloqueado"
 
 
 def to_webp(data: bytes, max_size: int = LOGO_SIZE) -> bytes:
@@ -82,6 +84,7 @@ def sync_images(db: Rest, players: list[dict], pages: dict[str, tuple[str, str]]
     """players: {id, nickname, team_id, team_name, team_slug, photo_source, country_code} dos times ativos."""
     photos, countries = plan_images(players, pages)
     by_id = {p["id"]: p for p in players}
+    photos = {pid: f for pid, f in photos.items() if by_id[pid].get("photo_source") != BLOCKED}
 
     team_titles = team_pages(players, pages)
     teams = {t["id"]: t for t in db.select("teams?select=id,slug,logo_source&active=eq.true")}
@@ -89,7 +92,7 @@ def sync_images(db: Rest, players: list[dict], pages: dict[str, tuple[str, str]]
     team_wiki = liquipedia.fetch_pages(sorted(set(team_titles.values())))
     for team_id, title in team_titles.items():
         logo = liquipedia.parse_team_logo(team_wiki[title][1]) if title in team_wiki else None
-        if logo and team_id in teams:
+        if logo and team_id in teams and teams[team_id].get("logo_source") != BLOCKED:
             logos[team_id] = logo
 
     pending = {f for pid, f in photos.items() if by_id[pid].get("photo_source") != f}

@@ -96,3 +96,37 @@ def test_logo_candidates_prefere_so_o_simbolo():
     assert logo_candidates("Team Spirit 2022 full darkmode.png") == [
         "Team Spirit 2022 darkmode.png", "Team Spirit 2022 full darkmode.png"]
     assert logo_candidates("G2 Esports darkmode.png") == ["G2 Esports darkmode.png"]
+
+
+class FakeDb:
+    def __init__(self, teams):
+        self.teams, self.updates, self.uploads = teams, [], []
+
+    def select(self, path):
+        return self.teams
+
+    def update(self, path, values):
+        self.updates.append((path, values))
+
+    def upload(self, bucket, path, data, content_type):
+        self.uploads.append(path)
+        return f"https://x/{path}"
+
+
+def test_sync_images_respeita_bloqueio(monkeypatch):
+    from jvk_pipeline import images, liquipedia
+
+    monkeypatch.setattr(liquipedia, "fetch_pages", lambda titles, api=None: {"Team Exemplo": ("Team Exemplo", TEAM)})
+    monkeypatch.setattr(liquipedia, "fetch_files", lambda names: {n: (f"https://liquipedia.net/{n}", None) for n in names})
+    monkeypatch.setattr(liquipedia, "download", lambda url: b"")
+    monkeypatch.setattr(images, "to_webp", lambda data, size=0: b"webp")
+
+    players = [{**PLAYERS[0], "photo_source": images.BLOCKED, "country_code": "ru"}]
+    db = FakeDb([{"id": 10, "slug": "exemplo", "logo_source": images.BLOCKED}])
+    images.sync_images(db, players, PAGES)
+    assert db.uploads == [] and db.updates == []
+
+    players[0]["photo_source"] = None
+    db = FakeDb([{"id": 10, "slug": "exemplo", "logo_source": None}])
+    images.sync_images(db, players, PAGES)
+    assert len(db.uploads) == 2 and db.uploads[0].startswith("jogadores/1-") and db.uploads[1].startswith("times/exemplo-")
