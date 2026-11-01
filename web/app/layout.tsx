@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Oxanium } from "next/font/google";
 import Link from "next/link";
 import { usingSampleData } from "@/lib/data";
+import "flag-icons/css/flag-icons.min.css";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
@@ -45,7 +46,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           >
             Liquipedia (CC BY-SA)
           </a>{" "}
-          e enviadas pela comunidade. Ranking: Valve Regional Standings. Não afiliado à Valve.
+          e enviadas pela comunidade. Fotos e logos via Liquipedia, de seus respectivos donos. Ranking: Valve
+          Regional Standings. Não afiliado à Valve.
         </footer>
       </body>
     </html>

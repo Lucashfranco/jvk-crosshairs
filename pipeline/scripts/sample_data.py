@@ -28,13 +28,13 @@ CODES = [
 
 
 def player(i: int, code: str | None) -> dict:
+    profile = {"player_id": i, "nickname": f"Jogador {i}", "photo_url": None, "photo_credit": None, "country_code": "br"}
     if code is None:  # jogador ainda sem mira cadastrada
         keys = ("code", "format", "params", "console", "last_seen", "source", "source_url")
-        return {"player_id": i, "nickname": f"Jogador {i}", **dict.fromkeys(keys)}
+        return {**profile, **dict.fromkeys(keys)}
     decoded = sharecode.decode(code)
     return {
-        "player_id": i,
-        "nickname": f"Jogador {i}",
+        **profile,
         "code": code,
         "format": decoded["format"],
         "params": decoded,

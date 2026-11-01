@@ -1,4 +1,4 @@
-"""Job semanal: atualiza times e elencos pelo VRS, busca as miras no Liquipedia e publica os envios aprovados.
+"""Job semanal: atualiza times e elencos pelo VRS, busca miras, fotos e logos no Liquipedia e publica os envios aprovados.
 
 Uso (GitHub Actions ou local):
     SUPABASE_URL=... SUPABASE_SERVICE_KEY=... python -m jvk_pipeline.publish
@@ -13,7 +13,7 @@ import sys
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
-from . import liquipedia, sharecode, vrs
+from . import images, liquipedia, sharecode, vrs
 from .db import Rest
 
 
@@ -91,16 +91,23 @@ def sync_teams(db: Rest, top: int = 20) -> str:
             f"{len(changes.moves)} trocaram de time, {len(changes.releases)} saíram")
 
 
-def sync_liquipedia(db: Rest) -> str:
+def load_liquipedia(db: Rest) -> tuple[list[dict], dict[str, tuple[str, str]]]:
+    """Jogadores dos times ativos e as páginas deles no Liquipedia (usadas pelas miras e pelas imagens)."""
+    rows = db.select("players?select=id,nickname,team_id,photo_source,country_code,teams!inner(name,slug)"
+                     "&teams.active=eq.true&order=id.asc")
+    players = [{"id": r["id"], "nickname": r["nickname"], "team_id": r["team_id"], "team_name": r["teams"]["name"],
+                "team_slug": r["teams"]["slug"], "photo_source": r["photo_source"],
+                "country_code": r["country_code"]} for r in rows]
+    return players, liquipedia.fetch_pages([p["nickname"] for p in players])
+
+
+def sync_liquipedia(db: Rest, players: list[dict], pages: dict[str, tuple[str, str]]) -> str:
     """Grava as miras do Liquipedia dos jogadores dos times ativos.
 
     A data da mira é a da referência no Liquipedia, então um envio mais novo da comunidade continua
     sendo a mira atual. Mira que já existe para o jogador não é tocada (ignore-duplicates).
     """
-    rows = db.select("players?select=id,nickname,teams!inner(name,slug)&teams.active=eq.true&order=id.asc")
-    players = [{"id": r["id"], "nickname": r["nickname"], "team_name": r["teams"]["name"],
-                "team_slug": r["teams"]["slug"]} for r in rows]
-    found, skipped = liquipedia.match_crosshairs(players, liquipedia.fetch_pages([p["nickname"] for p in players]))
+    found, skipped = liquipedia.match_crosshairs(players, pages)
     saved = []
     for f in found:
         try:
@@ -154,7 +161,9 @@ def main() -> int:
     log, status, published, invalid = [], "erro", 0, 0
     try:
         log.append(sync_teams(db))
-        log.append(sync_liquipedia(db))
+        players, pages = load_liquipedia(db)
+        log.append(sync_liquipedia(db, players, pages))
+        log.append(images.sync_images(db, players, pages))
         published, invalid = publish_submissions(db)
         log.append(f"envios: {published} publicados, {invalid} inválidos")
         status = "ok" if invalid == 0 else "parcial"

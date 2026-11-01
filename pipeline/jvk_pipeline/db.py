@@ -13,8 +13,24 @@ class SupabaseError(RuntimeError):
 
 class Rest:
     def __init__(self, url: str, key: str):
-        self.base = url.rstrip("/") + "/rest/v1/"
+        self.root = url.rstrip("/")
+        self.base = self.root + "/rest/v1/"
         self.key = key
+
+    def upload(self, bucket: str, path: str, data: bytes, content_type: str) -> str:
+        """Grava (ou substitui) um arquivo no Storage e devolve a URL pública dele."""
+        req = urllib.request.Request(
+            f"{self.root}/storage/v1/object/{bucket}/{path}", data=data, method="POST",
+            headers={"apikey": self.key, "Authorization": f"Bearer {self.key}",
+                     "Content-Type": content_type, "x-upsert": "true", "Cache-Control": "max-age=31536000"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=60):
+                pass
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", "replace")[:300]
+            raise SupabaseError(f"upload {bucket}/{path}: {e.code} {detail}") from None
+        return f"{self.root}/storage/v1/object/public/{bucket}/{path}"
 
     def request(self, method: str, path: str, body=None, prefer: str | None = None):
         headers = {"apikey": self.key, "Authorization": f"Bearer {self.key}", "Content-Type": "application/json"}

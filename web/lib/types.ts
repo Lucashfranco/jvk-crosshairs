@@ -42,6 +42,9 @@ export type PlayerCrosshair = {
   last_seen: string | null;
   source: string | null; // "Liquipedia" ou "envio #<id>"
   source_url: string | null;
+  photo_url: string | null; // foto do Liquipedia, copiada para o Storage
+  photo_credit: string | null; // autor e dono da foto
+  country_code: string | null; // ISO 3166-1 alfa-2, minúsculo
 };
 
 export type RosterTeam = {

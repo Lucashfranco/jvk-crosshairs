@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TeamLogo } from "@/components/Images";
 import { getTeams } from "@/lib/data";
 
 export default async function Home() {
@@ -26,7 +27,8 @@ export default async function Home() {
                 <span className="font-display w-8 text-right text-lg text-accent">
                   {team.rank != null ? `#${team.rank}` : "–"}
                 </span>
-                <span className="font-display text-lg font-medium">{team.name}</span>
+                <TeamLogo team={team} size={32} />
+                <span className="font-display truncate text-lg font-medium">{team.name}</span>
               </Link>
             </li>
           ))}
