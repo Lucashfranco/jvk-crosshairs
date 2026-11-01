@@ -9,4 +9,5 @@ demos/
 .env.*
 node_modules/
 .next/
+.vercel
 !.env.example

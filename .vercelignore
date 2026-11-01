@@ -1,0 +1,6 @@
+# O site fica em web/; o resto não precisa subir para a Vercel.
+/.venv
+/pipeline
+/supabase
+/.claude
+/.github
