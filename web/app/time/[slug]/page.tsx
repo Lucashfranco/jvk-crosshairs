@@ -40,13 +40,11 @@ async function TeamContent({ slug }: { slug: string }) {
         {team.name}
       </h1>
       {players.length === 0 ? (
-        <p className="rounded-xl border border-line bg-card p-6 text-muted">
-          Ainda não temos as miras deste time. Elas aparecem depois que uma partida dele for processada.
-        </p>
+        <p className="rounded-xl border border-line bg-card p-6 text-muted">Ainda não temos o elenco deste time.</p>
       ) : (
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {players.map((p) => (
-            <PlayerCard key={p.steamid} player={p} />
+            <PlayerCard key={p.player_id} player={p} />
           ))}
         </ul>
       )}
@@ -55,6 +53,23 @@ async function TeamContent({ slug }: { slug: string }) {
 }
 
 function PlayerCard({ player }: { player: PlayerCrosshair }) {
+  const submitHref = `/enviar?jogador=${player.player_id}`;
+  if (!player.code || !player.params || !player.console) {
+    return (
+      <li className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-line bg-card p-4">
+        <h2 className="font-display text-xl font-bold">{player.nickname}</h2>
+        <div className="flex size-40 items-center justify-center rounded-lg bg-bg text-center text-sm text-muted">
+          Sem mira cadastrada
+        </div>
+        <Link
+          href={submitHref}
+          className="w-full rounded-lg border border-line px-3 py-2 text-center text-sm font-semibold hover:border-accent hover:text-white"
+        >
+          Enviar a mira
+        </Link>
+      </li>
+    );
+  }
   const legacy = player.format !== "cs2-v1";
   return (
     <li className="flex flex-col items-center gap-3 rounded-xl border border-line bg-card p-4">
@@ -73,6 +88,9 @@ function PlayerCard({ player }: { player: PlayerCrosshair }) {
           Código no formato antigo (CSGO-): o CS2 não importa mais. Use os comandos.
         </p>
       )}
+      <Link href={submitHref} className="text-xs text-muted hover:text-accent">
+        Mira mudou? Envie a nova
+      </Link>
     </li>
   );
 }

@@ -4,9 +4,24 @@ Miras dos pro players de CS2, extraídas das demos das partidas. Projeto da JVK 
 
 ## Estrutura
 
-- `pipeline/`: Python. Decodifica códigos de mira (`jvk_pipeline/sharecode.py`) e extrai a mira de cada jogador de uma demo `.dem` com o demoparser2 (`jvk_pipeline/extract.py`).
-- `supabase/migrations/`: esquema do banco (times, jogadores, miras, partidas processadas, execuções).
+- `pipeline/`: Python. Decodifica códigos de mira (`jvk_pipeline/sharecode.py`), extrai a mira de cada jogador de uma demo `.dem` com o demoparser2 (`jvk_pipeline/extract.py`) e roda o job semanal (`jvk_pipeline/publish.py`).
+- `supabase/migrations/`: esquema do banco (times, jogadores, miras, envios, partidas processadas, execuções).
 - `web/`: front-end Next.js 16 + Tailwind. Sem as variáveis de `web/.env.example` usa dados de exemplo (`npm --prefix web run dev`).
+- `.github/workflows/publicar.yml`: job semanal (segunda, 06:00 de Brasília), também disparável à mão.
+
+## Como as miras chegam ao site
+
+1. **Times e elencos**: o job semanal lê o top 20 do [Valve Regional Standings](https://github.com/ValveSoftware/counter-strike_regional_standings), cria os times e jogadores novos e move quem trocou de time.
+2. **Envio**: qualquer pessoa manda o código da mira de um jogador em `/enviar`. O site confere o código antes de gravar e o banco só aceita envios `pendente` vindos do público.
+3. **Revisão**: no Supabase, Table Editor → `submissions`, troque `status` para `aprovado` ou `rejeitado` (o campo `note` guarda o motivo).
+4. **Publicação**: o job decodifica os envios aprovados, grava a mira (`crosshairs`) e marca o envio como `publicado`, ou `invalido` se o código não decodificar. Cada execução fica em `pipeline_runs`.
+
+O site guarda as consultas em cache por até 1 hora, então uma mira publicada aparece em até 1 hora depois do job.
+
+### Secrets do GitHub Actions
+
+- `SUPABASE_URL`: `https://<ref>.supabase.co`
+- `SUPABASE_SERVICE_KEY`: a chave **secret** do Supabase (Settings → API Keys). Nunca vai para o site nem para o repositório.
 
 ## Formatos de código de mira
 

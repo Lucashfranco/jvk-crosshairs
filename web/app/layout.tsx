@@ -9,7 +9,7 @@ const oxanium = Oxanium({ variable: "--font-oxanium", subsets: ["latin"], weight
 
 export const metadata: Metadata = {
   title: "JVK Crosshairs: miras dos pros de CS2",
-  description: "Copie a mira dos jogadores profissionais de CS2, atualizada a partir das demos das partidas.",
+  description: "Copie a mira dos jogadores profissionais de CS2 dos times do top 20 mundial.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -21,7 +21,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/" className="font-display text-xl font-bold tracking-wide">
               JVK <span className="text-accent">Crosshairs</span>
             </Link>
-            <span className="text-sm text-muted">por JVK Performance</span>
+            <nav className="flex items-center gap-4 text-sm">
+              <Link href="/enviar" className="font-semibold text-accent hover:text-ink">
+                Enviar mira
+              </Link>
+              <span className="hidden text-muted sm:inline">por JVK Performance</span>
+            </nav>
           </div>
         </header>
         {usingSampleData && (
@@ -31,7 +36,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         )}
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
         <footer className="border-t border-line px-4 py-6 text-center text-xs text-muted">
-          Miras extraídas das demos das partidas. Não afiliado à Valve.
+          Miras enviadas pela comunidade e revisadas antes de publicar. Ranking: Valve Regional Standings. Não afiliado à
+          Valve.
         </footer>
       </body>
     </html>

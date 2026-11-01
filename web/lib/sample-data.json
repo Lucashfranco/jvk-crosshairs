@@ -7,7 +7,7 @@
       "logo_url": null,
       "players": [
         {
-          "steamid": "exemplo-1",
+          "player_id": 1,
           "nickname": "Jogador 1",
           "code": "CSoYQNXCQtL5b44fPZKwPPZZCUpsywopyvJW3koh75uFih",
           "format": "cs2-v1",
@@ -42,7 +42,7 @@
           "last_seen": "2026-10-31T00:00:00Z"
         },
         {
-          "steamid": "exemplo-2",
+          "player_id": 2,
           "nickname": "Jogador 2",
           "code": "CSGO-tsJdC-2PFX6-fw8qD-6GDaX-rYCUM",
           "format": "legacy-v3",
@@ -71,7 +71,7 @@
           "last_seen": "2026-10-31T00:00:00Z"
         },
         {
-          "steamid": "exemplo-3",
+          "player_id": 3,
           "nickname": "Jogador 3",
           "code": "CSGO-G8oAC-RyvWc-Hi3CZ-voSwn-QJbfE",
           "format": "legacy-v4",
@@ -100,7 +100,7 @@
           "last_seen": "2026-10-31T00:00:00Z"
         },
         {
-          "steamid": "exemplo-4",
+          "player_id": 4,
           "nickname": "Jogador 4",
           "code": "CSGO-MnUCC-89iG7-2cVar-wy7Yn-amCpF",
           "format": "legacy-v3",
@@ -129,7 +129,7 @@
           "last_seen": "2026-10-31T00:00:00Z"
         },
         {
-          "steamid": "exemplo-5",
+          "player_id": 5,
           "nickname": "Jogador 5",
           "code": "CSGO-sP6xU-TSyN9-sZcO5-2D48M-UppkP",
           "format": "legacy-v4",
@@ -166,7 +166,7 @@
       "logo_url": null,
       "players": [
         {
-          "steamid": "exemplo-6",
+          "player_id": 6,
           "nickname": "Jogador 6",
           "code": "CSGO-cA4U9-hiJwT-Wo9NA-YmTS8-WfH4C",
           "format": "legacy-v3",
@@ -195,7 +195,7 @@
           "last_seen": "2026-10-31T00:00:00Z"
         },
         {
-          "steamid": "exemplo-7",
+          "player_id": 7,
           "nickname": "Jogador 7",
           "code": "CSGO-Cn37R-YE7vo-pLCAL-aURmZ-z6zkG",
           "format": "legacy-v1",
@@ -227,7 +227,7 @@
           "last_seen": "2026-10-31T00:00:00Z"
         },
         {
-          "steamid": "exemplo-8",
+          "player_id": 8,
           "nickname": "Jogador 8",
           "code": "CSGO-9JzcN-4dZtA-DdXis-8qz5T-rCnkP",
           "format": "legacy-v1",
@@ -259,7 +259,7 @@
           "last_seen": "2026-10-31T00:00:00Z"
         },
         {
-          "steamid": "exemplo-9",
+          "player_id": 9,
           "nickname": "Jogador 9",
           "code": "CSGO-vcmKL-TWb8f-ddSDD-qM2Xx-T66VH",
           "format": "legacy-v3",
@@ -288,33 +288,13 @@
           "last_seen": "2026-10-31T00:00:00Z"
         },
         {
-          "steamid": "exemplo-10",
+          "player_id": 10,
           "nickname": "Jogador 10",
-          "code": "CSGO-p4NqQ-mV2es-p2UF3-Q9HWe-fVmoE",
-          "format": "legacy-v3",
-          "params": {
-            "format": "legacy-v3",
-            "style": 3,
-            "followRecoil": false,
-            "centerDotEnabled": false,
-            "tStyleEnabled": false,
-            "red": 0,
-            "green": 255,
-            "blue": 0,
-            "alpha": 255,
-            "gap": 4,
-            "length": 8,
-            "dynamicSpreadLimit": 255,
-            "splitDistance": 7,
-            "innerSplitAlpha": 1.0,
-            "outerSplitAlpha": 0.45,
-            "splitSizeRatio": 0.3,
-            "thickness": 1,
-            "screenHeight": 1080,
-            "outlineEnabled": true
-          },
-          "console": "cl_crosshair_drawoutline \"1\"; cl_crosshair_dynamic_maxdist_splitratio \"0.3\"; cl_crosshair_dynamic_splitalpha_innermod \"1\"; cl_crosshair_dynamic_splitalpha_outermod \"0.45\"; cl_crosshair_dynamic_splitdist \"7\"; cl_crosshair_dynamic_spread_limit \"255\"; cl_crosshair_gap \"4\"; cl_crosshair_length \"8\"; cl_crosshair_recoil \"0\"; cl_crosshair_screen_height \"1080\"; cl_crosshair_t \"0\"; cl_crosshair_thickness \"1\"; cl_crosshaircolor_a \"255\"; cl_crosshaircolor_b \"0\"; cl_crosshaircolor_g \"255\"; cl_crosshaircolor_r \"0\"; cl_crosshairdot \"0\"; cl_crosshairstyle \"3\"",
-          "last_seen": "2026-10-31T00:00:00Z"
+          "code": null,
+          "format": null,
+          "params": null,
+          "console": null,
+          "last_seen": null
         }
       ]
     }

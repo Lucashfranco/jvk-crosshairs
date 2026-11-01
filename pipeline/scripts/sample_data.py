@@ -23,14 +23,17 @@ CODES = [
     "CSGO-Cn37R-YE7vo-pLCAL-aURmZ-z6zkG",
     "CSGO-9JzcN-4dZtA-DdXis-8qz5T-rCnkP",
     "CSGO-vcmKL-TWb8f-ddSDD-qM2Xx-T66VH",
-    "CSGO-p4NqQ-mV2es-p2UF3-Q9HWe-fVmoE",
+    None,
 ]
 
 
-def player(i: int, code: str) -> dict:
+def player(i: int, code: str | None) -> dict:
+    if code is None:  # jogador ainda sem mira cadastrada
+        keys = ("code", "format", "params", "console", "last_seen")
+        return {"player_id": i, "nickname": f"Jogador {i}", **dict.fromkeys(keys)}
     decoded = sharecode.decode(code)
     return {
-        "steamid": f"exemplo-{i}",
+        "player_id": i,
         "nickname": f"Jogador {i}",
         "code": code,
         "format": decoded["format"],

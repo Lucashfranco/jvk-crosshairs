@@ -31,12 +31,19 @@ export type Team = {
   logo_url: string | null;
 };
 
+// Linha da view current_crosshairs: todo jogador do time, com a mira mais recente (code nulo = ainda sem mira).
 export type PlayerCrosshair = {
-  steamid: string;
+  player_id: number;
   nickname: string;
-  code: string;
-  format: CrosshairParams["format"];
-  params: CrosshairParams;
-  console: string;
-  last_seen: string;
+  code: string | null;
+  format: CrosshairParams["format"] | null;
+  params: CrosshairParams | null;
+  console: string | null;
+  last_seen: string | null;
+};
+
+export type RosterTeam = {
+  slug: string;
+  name: string;
+  players: { id: number; nickname: string }[];
 };
