@@ -139,9 +139,9 @@ def check_key(key: str) -> str | None:
 
 
 def main() -> int:
-    # strip: secrets colados no terminal costumam vir com quebra de linha no fim.
-    url = os.environ.get("SUPABASE_URL", "").strip()
-    key = os.environ.get("SUPABASE_SERVICE_KEY", "").strip()
+    # Chave e URL nunca têm espaços; secrets colados no terminal costumam vir com quebras de linha.
+    url = "".join(os.environ.get("SUPABASE_URL", "").split())
+    key = "".join(os.environ.get("SUPABASE_SERVICE_KEY", "").split())
     if not url or not key:
         print("Defina SUPABASE_URL e SUPABASE_SERVICE_KEY.", file=sys.stderr)
         return 2
