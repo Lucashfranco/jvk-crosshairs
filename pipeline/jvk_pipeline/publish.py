@@ -128,7 +128,9 @@ def publish_submissions(db: Rest) -> tuple[int, int]:
 
 
 def main() -> int:
-    url, key = os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_SERVICE_KEY")
+    # strip: secrets colados no terminal costumam vir com quebra de linha no fim.
+    url = os.environ.get("SUPABASE_URL", "").strip()
+    key = os.environ.get("SUPABASE_SERVICE_KEY", "").strip()
     if not url or not key:
         print("Defina SUPABASE_URL e SUPABASE_SERVICE_KEY.", file=sys.stderr)
         return 2
