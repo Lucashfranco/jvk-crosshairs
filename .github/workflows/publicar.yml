@@ -1,5 +1,5 @@
 # Toda segunda: atualiza times e elencos pelo Valve Regional Standings e publica os envios aprovados.
-# Precisa dos secrets SUPABASE_URL e SUPABASE_SERVICE_KEY (chave secret do Supabase) no repositório.
+# Precisa dos secrets SUPABASE_URL e JVK_CROSSHAIR (chave secret do Supabase) no repositório.
 name: Publicar miras
 
 on:
@@ -34,5 +34,5 @@ jobs:
       - name: Atualizar times e publicar envios
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.JVK_CROSSHAIR }}
         run: python -m jvk_pipeline.publish

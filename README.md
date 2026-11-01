@@ -23,7 +23,7 @@ O site guarda as consultas em cache por até 1 hora, então uma mira publicada a
 ### Secrets do GitHub Actions
 
 - `SUPABASE_URL`: `https://<ref>.supabase.co`
-- `SUPABASE_SERVICE_KEY`: a chave **secret** do Supabase (Settings → API Keys). Nunca vai para o site nem para o repositório.
+- `JVK_CROSSHAIR`: a chave **secret** do Supabase (Settings → API Keys). Nunca vai para o site nem para o repositório.
 
 ## Formatos de código de mira
 
