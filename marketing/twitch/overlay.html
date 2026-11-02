@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Overlay da live</title>
+<link rel="stylesheet" href="base.css">
+<style>
+  /* Faixa para a tela da live (canvas 1920x1080). Fundo transparente fora do cartão.
+     No OBS como "Navegador" ela é animada: a mira do quadro troca de pro a cada 4 s.
+     Com ?static a animação fica parada (usado para gerar o PNG). */
+  body { padding: 16px; }
+  .bar {
+    width: 868px; height: 128px; padding: 0 22px 0 14px;
+    display: flex; align-items: center; gap: 20px;
+    background:
+      radial-gradient(80% 140% at 0% 50%, rgba(139, 92, 246, .28), transparent 60%),
+      rgba(7, 6, 13, .92);
+    border: 1px solid var(--glow); border-radius: 6px;
+    box-shadow: 0 0 0 1px rgba(139, 92, 246, .15), 0 10px 30px rgba(0, 0, 0, .55), 0 0 24px rgba(139, 92, 246, .25);
+  }
+  .bar .scope { width: 100px; height: 100px; }
+  .bar .scope .who { font-size: 12px; }
+  .scope svg { transition: opacity .35s; }
+  .scope.out svg, .scope.out .who { opacity: 0; }
+  .brand .jvk { font-size: 30px; }
+  .brand .sub { font-size: 10px; margin-top: 5px; }
+  .sep { width: 1px; align-self: stretch; margin: 24px 0; background: var(--border); }
+  .msg { flex: 1; }
+  .tag { font-size: 11px; margin-bottom: 6px; }
+  .msg h2 { font-family: Oxanium; font-weight: 700; font-size: 24px; line-height: 1.15; }
+  .msg h2 em { font-style: normal; color: var(--accent-light); }
+  .msg p { margin-top: 6px; font-size: 14px; color: var(--muted); }
+  .msg p b { color: var(--text); font-weight: 600; }
+  .cta {
+    flex: none; padding: 12px 16px; border-radius: 6px; background: var(--accent);
+    text-align: center; color: #fff;
+  }
+  .cta small { display: block; font-size: 11.5px; opacity: .85; font-weight: 500; }
+  .cta b { font-family: Oxanium; font-size: 19px; letter-spacing: .02em; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 1px rgba(139, 92, 246, .35), 0 10px 30px rgba(0, 0, 0, .55), 0 0 40px rgba(139, 92, 246, .5); } }
+  .live .bar { animation: pulse 4s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="scope" id="scope"></div>
+  <div class="brand">
+    <div><div class="jvk">JVK</div><div class="sub">CROSSHAIRS</div></div>
+  </div>
+  <div class="sep"></div>
+  <div class="msg">
+    <div class="tag">[ quer a mira dos pros? ]</div>
+    <h2>A mira dos pros <em>no seu CS2</em></h2>
+    <p>Top 20 da Valve · Código pronto pra copiar · <b>Grátis</b></p>
+  </div>
+  <div class="cta"><small>Link das miras</small><b>na descrição</b></div>
+</div>
+<script src="miras.js"></script>
+<script>
+  const scope = document.getElementById("scope");
+  let i = 0;
+  fillScope(scope, PROS[i], 44);
+  if (!location.search.includes("static")) {
+    document.body.classList.add("live");
+    setInterval(() => {
+      scope.classList.add("out");
+      setTimeout(() => {
+        i = (i + 1) % PROS.length;
+        fillScope(scope, PROS[i], 44);
+        scope.classList.remove("out");
+      }, 350);
+    }, 4000);
+  }
+</script>
+</body>
+</html>

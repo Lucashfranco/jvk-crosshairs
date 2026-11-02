@@ -1,0 +1,38 @@
+/* Identidade do site: mesmas fontes e cores de web/app/globals.css */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oxanium:wght@600;700&display=block");
+
+:root {
+  --bg: #07060D;
+  --surface: #110E1E;
+  --surface-on: #160F2B;
+  --border: #2A2342;
+  --glow: #5B3BB0;
+  --accent: #8B5CF6;
+  --accent-text: #B69CFF;
+  --accent-light: #D3C3FF;
+  --text: #F2EFFA;
+  --muted: #9A93B3;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: transparent; }
+body { font-family: Inter, sans-serif; color: var(--text); -webkit-font-smoothing: antialiased; }
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand svg { flex: none; }
+.brand .jvk { font-family: Oxanium; font-weight: 700; line-height: 1; color: var(--text); }
+.brand .sub { font-family: Oxanium; font-weight: 600; letter-spacing: .32em; color: var(--accent-text); line-height: 1; }
+.tag { font-family: Oxanium; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-text); }
+
+/* Quadro com a mira de um pro, desenhada pixel a pixel (como no jogo) e ampliada */
+.scope {
+  position: relative; flex: none; border-radius: 6px; overflow: hidden;
+  background: radial-gradient(circle at 30% 20%, #5b6470, #2b3038 60%, #1b1e24);
+  border: 1px solid var(--border);
+}
+.scope svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scope .who {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 3px 0 4px; text-align: center;
+  font-family: Oxanium; font-weight: 700; color: var(--text);
+  background: linear-gradient(transparent, rgba(7, 6, 13, .85));
+}
