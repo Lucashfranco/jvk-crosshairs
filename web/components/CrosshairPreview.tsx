@@ -1,7 +1,8 @@
 import type { CrosshairParams } from "@/lib/types";
 
 // Área mostrada no preview, em pixels de uma tela 1080p, e tamanho final na página.
-const AREA = 64;
+// Iguais: a mira aparece no tamanho real que tem no jogo em 1080p, sem ampliar.
+const AREA = 160;
 const SIZE = 160;
 
 type Shape = { x: number; y: number; w: number; h: number };
@@ -16,11 +17,12 @@ function measure(p: CrosshairParams) {
       approximate: true,
     };
   }
+  // O jogo desenha em pixels inteiros; sem arredondar, as bordas ficam borradas.
   const scale = 1080 / (p.screenHeight || 1080);
   return {
-    length: p.length * scale,
+    length: Math.round(p.length * scale),
     thickness: Math.max(1, Math.round(p.thickness * scale)),
-    gap: p.gap * scale,
+    gap: Math.round(p.gap * scale),
     approximate: false,
   };
 }
